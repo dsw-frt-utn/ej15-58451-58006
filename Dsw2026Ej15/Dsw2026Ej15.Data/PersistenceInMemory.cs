@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace Dsw2026Ej15.Data
 {
+    // Implementación en memoria de la persistencia.
+    // Mantiene los datos mientras la aplicación se encuentra en ejecución.
     public class PersistenceInMemory : IPersistence
     {
         private List<Speciality> _specialities = [];
@@ -21,10 +23,22 @@ namespace Dsw2026Ej15.Data
             LoadSpecialities();
         }
 
+        public Doctor? GetActiveDoctorById(Guid id)
+        {
+            return _doctors.SingleOrDefault(d => d.Id == id && d.IsActive);
+        }
+
         public Speciality? GetSpecialityById(Guid id)
         {
             return _specialities.SingleOrDefault(e => e.Id == id);
         }
+
+        public IReadOnlyCollection<Doctor> GetActiveDoctors()
+        {
+            return _doctors.Where(d => d.IsActive).ToList().AsReadOnly();
+        }
+
+        // Carga inicial de especialidades desde el archivo JSON.
         public void LoadSpecialities()
         {
             try

@@ -13,6 +13,10 @@ namespace Dsw2026Ej15.Domain.Interfaces
         Speciality? GetSpecialityById(Guid id);
         void SaveDoctor(Doctor doctor);
 
+        IReadOnlyCollection<Doctor> GetActiveDoctors();
+
+        Doctor? GetActiveDoctorById(Guid id);
+
 
         /*IReadOnlyCollection<Doctor> GetDoctors();
 

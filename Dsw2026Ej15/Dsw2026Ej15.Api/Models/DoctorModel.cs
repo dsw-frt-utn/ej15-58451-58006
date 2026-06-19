@@ -6,6 +6,7 @@
         //me permite agrupar la estructura de los distintos records
         public record Request(string Name, string LicenseNumber, Guid SpecialityId);
 
-        //public record Response();
+        public record Response(Guid Id, string Name, string LicenseNumber, string SpecialityName);
+
     }
 }

@@ -1,4 +1,4 @@
-
+using Dsw2026Ej15.Api.Middlewares;
 using Dsw2026Ej15.Data;
 using Dsw2026Ej15.Domain.Interfaces;
 namespace Dsw2026Ej15.Api
@@ -16,7 +16,10 @@ namespace Dsw2026Ej15.Api
             //builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Registro de la persistencia como Singleton.
             builder.Services.AddSingleton<IPersistence, PersistenceInMemory>();
+
+            builder.Services.AddHealthChecks();
             
             var app = builder.Build();
 
@@ -27,10 +30,15 @@ namespace Dsw2026Ej15.Api
                 app.UseSwaggerUI();
             }
 
+            // Middleware global de manejo de excepciones.
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            // Endpoint básico para comprobar que la API está levantada.
+            app.MapHealthChecks("/health-check");
 
             app.Run();
         }
