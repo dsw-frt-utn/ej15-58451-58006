@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Dsw2026Ej15.Domain.Exceptions;
+using System.Net;
+using System.Text.Json;
 
 namespace Dsw2026Ej15.Api.Middlewares
 {
@@ -18,27 +20,28 @@ namespace Dsw2026Ej15.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (ValidationException ex)
+            catch (Exception ex)
             {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                context.Response.ContentType = "application/json";
-
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    message = ex.Message
-                });
+                await HandleExceptionAsync(context, ex);
             }
-            catch (Exception)
+        }
+
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            HttpStatusCode status = HttpStatusCode.InternalServerError;
+            string message = "Ocurrió un error inesperado sl ejecutar la solicitud.";
+
+            if (ex is ValidationException ve)
             {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/problem+json";
-
-                await context.Response.WriteAsJsonAsync(new ProblemDetails
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Ocurrió un error inesperado."
-                });
+                status = HttpStatusCode.BadRequest;
+                message = ve.Message;
             }
+
+            var result = JsonSerializer.Serialize(new { error = message });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)status;
+            await context.Response.WriteAsync(result);
         }
     }
 }
+
