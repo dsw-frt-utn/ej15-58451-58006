@@ -24,33 +24,6 @@ namespace Dsw2026Ej15.Api.Middlewares
             {
                 await HandleExceptionAsync(context, ex);
             }
-            /*catch (ValidationException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                context.Response.ContentType = "application/json";
-
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    message = ex.Message
-                });
-            }
-            catch (Exception)
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/problem+json";
-
-                await context.Response.WriteAsJsonAsync(new ProblemDetails
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Ocurrió un error inesperado."
-                });
-
-                //el profe lo tiene distinto 
-                //enviar mensaje al profe :b
-                //serializar es tomar objeto y lo convierto a json
-            //la paprte del middleware que corta con el flujo es el try catch
-
-            }*/
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
