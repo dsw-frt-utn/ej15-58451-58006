@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Dsw2026Ej15.Domain.Exceptions;
+using System.Net;
+using System.Text.Json;
 
 namespace Dsw2026Ej15.Api.Middlewares
 {
@@ -18,7 +20,11 @@ namespace Dsw2026Ej15.Api.Middlewares
             {
                 await _next(context);
             }
-            catch (ValidationException ex)
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex);
+            }
+            /*catch (ValidationException ex)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 context.Response.ContentType = "application/json";
@@ -38,7 +44,31 @@ namespace Dsw2026Ej15.Api.Middlewares
                     Status = StatusCodes.Status500InternalServerError,
                     Title = "Ocurrió un error inesperado."
                 });
+
+                //el profe lo tiene distinto 
+                //enviar mensaje al profe :b
+                //serializar es tomar objeto y lo convierto a json
+            //la paprte del middleware que corta con el flujo es el try catch
+
+            }*/
+        }
+
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            HttpStatusCode status = HttpStatusCode.InternalServerError;
+            string message = "Ocurrió un error inesperado sl ejecutar la solicitud.";
+
+            if (ex is ValidationException ve)
+            {
+                status = HttpStatusCode.BadRequest;
+                message = ve.Message;
             }
+
+            var result = JsonSerializer.Serialize(new { error = message });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)status;
+            await context.Response.WriteAsync(result);
         }
     }
 }
+
