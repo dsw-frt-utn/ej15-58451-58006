@@ -47,7 +47,7 @@ namespace Dsw2026Ej15.Api.Controllers
             var doctor = new Doctor(request.Name, request.LicenseNumber, speciality);
             _persistence.SaveDoctor(doctor);
 
-            return Created("", null);
+            return Created();
         }
 
         [HttpGet("doctors")]
